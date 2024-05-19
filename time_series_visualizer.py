@@ -20,8 +20,8 @@ def draw_line_plot():
     ax.plot(df.index, df['value'], 'r', linewidth = 1)
 
     ax.set_title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
-    ax.setx_label('Date')
-    ax.sety_label('Page Views')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Page Views')
 
     # Save image and return fig (don't change this part)
     fig.savefig('line_plot.png')
@@ -29,16 +29,18 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar['month'] = df.index.month
-    df_bar['year'] = df.index.year
+    df['month'] = df.index.month
+    df['year'] = df.index.year
     df_bar = df.groupby(['year', 'month'])['value'].mean()
     df_bar = df_bar.unstack()
 
     # Draw bar plot
 
-    fig = df_bar.plot()
+    fig = df_bar.plot.bar(legend = True, figsize = (10,5), ylabel = "Average Page Views", xlabel = "Years").figure
+    plt.legend(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])
 
-
+    plt.xticks(fontsize = 10)
+    plt.yticks(fontsize = 10)
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
@@ -52,10 +54,20 @@ def draw_box_plot():
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
     # Draw box plots (using Seaborn)
-
-
-
-
+    fig, axes = plt.subplots(1, 2, figsize=(32, 10), dpi=100)
+    
+    # Yearly boxplot
+    sns.boxplot(x="year", y="value", data=df_box, ax=axes[0])
+    axes[0].set_title("Year-wise Box Plot (Trend)")
+    axes[0].set_xlabel("Year")
+    axes[0].set_ylabel("Page Views")
+    
+    # Monthly boxplot
+    month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    sns.boxplot(x="month", y="value", data=df_box, ax=axes[1], order=month_order)
+    axes[1].set_title("Month-wise Box Plot (Seasonality)")
+    axes[1].set_xlabel("Month")
+    axes[1].set_ylabel("Page Views")
 
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
